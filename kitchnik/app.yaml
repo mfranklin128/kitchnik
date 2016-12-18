@@ -4,5 +4,4 @@ threadsafe: true
 
 handlers:
 - url: /.*
-  script: kitchnik_main.app
-
+  script: __init__.app
