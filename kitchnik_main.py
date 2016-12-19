@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return "You've found the index page!"
+	return render_template('index.html')
 
 @app.route('/hello/')
 @app.route('/hello/<name>')
