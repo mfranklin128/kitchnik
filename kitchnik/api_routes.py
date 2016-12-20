@@ -1,5 +1,11 @@
 from flask import Flask, render_template, make_response, jsonify, request
 
+import google.auth.transport.requests
+import google.oauth2.id_token
+import requests_toolbelt.adapters.appengine
+
+HTTP_REQUEST = google.auth.transport.requests.Request()
+
 from kitchnik import app
 
 tasks = [
@@ -23,7 +29,11 @@ tasks = [
     # read all
 @app.route('/api/v1/tasks', methods=['GET'])
 def get_tasks():
-    return jsonify({'tasks': tasks})
+    id_token = request.headers['Authorization'].split(' ').pop()
+    claims = google.oauth2.id_token.verify_firebase_token(id_token, HTTP_REQUEST)
+    if not claims:
+        return 'Unauthorized', 401
+    return jsonify({'tasks': tasks, 'user': claims['sub']})
 
     # read 1
 @app.route('/api/v1/tasks/<int:task_id>', methods=['GET'])
